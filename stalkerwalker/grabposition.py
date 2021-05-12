@@ -9,7 +9,8 @@
 """
 from pymem import Pymem
 import time
-
+import keyboard
+import mouse
 
 for i in range(5):
     print(i)
@@ -26,8 +27,18 @@ if "__main__" == __name__:
     while not plashka:
         z = pm.read_float(pm.base_address+0x104944)
         x = pm.read_float(pm.base_address+0x10493C)
+        if(keyboard.is_pressed('space')):
+            j = 1.0
+        else:
+            j = 0.0
+        if(mouse.is_pressed('right')):
+            r = 1.0
+        else:
+            r = 0.0
         plashka = pm.read_bool(module_offset+0x54C2F9)
-        holder.append([x, z])
-        time.sleep(0.5)
+        holder.append([x, z, j, r])
+        time.sleep(0.016)
+        if(keyboard.is_pressed('F4')):
+            break
     with open("dataclean", mode="w") as file:
         file.write(str(holder))
