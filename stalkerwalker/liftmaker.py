@@ -44,18 +44,18 @@ if __name__ == "__main__":
     keys.directKey("space", keys.key_release)
     time.sleep(0.3)
 
-    for i in range(0,4):
+    for i in range(0, 4):
         if(keyboard.is_pressed('F4')):
             break
         keys.directKey("w")
         time.sleep(0.05)
         keys.directKey("w", keys.key_release)
         time.sleep(0.05)
-        
+
     keys.directKey("w")
     time.sleep(1)
 
-    for i in range(0,10):
+    for i in range(0, 10):
         if(keyboard.is_pressed('F4')):
             break
         keys.directKey("w")

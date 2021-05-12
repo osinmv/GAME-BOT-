@@ -16,5 +16,5 @@ if __name__ == "__main__":
         for i in range(1, len(points)):
             drawing.line((points[i-1][0]*X_COEF+X_OFFSET, points[i-1][1]
                           * Y_COEF+Y_OFFSET)+(points[i][0]*X_COEF+X_OFFSET, points[i][1]
-                                              * Y_COEF+Y_OFFSET), fill=(255,255,255,255))
+                                              * Y_COEF+Y_OFFSET), fill=(255, 255, 255, 255))
         im.save("map_garbage_new.png", "PNG")
