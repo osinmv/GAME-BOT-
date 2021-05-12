@@ -8,20 +8,6 @@ from pymem import Pymem
 from math import acos, pi, sin, sqrt, isclose
 
 
-def calculate_angle(target: list, current: list, view: list):
-    """Return turning angle in pixels"""
-    vector = [target[0]-current[0], target[1]-current[1]]
-    lengths = sqrt(vector[0]*vector[0]+vector[1]*vector[1])
-    vector2 = [view[1] - vector[0]/lengths, view[0] - vector[1]/lengths]
-    l2 = sqrt(vector2[0]*vector2[0]+vector2[1]*vector2[1])
-    vector2 = [vector2[0]/l2, vector2[1]/l2]
-    print(str(vector2[0]))
-    angle = acos(vector2[0])
-    return int(-1*angle*11.82)
-
-
-
-
 def calculate_angle_my(target: list, current: list, view: list):
     """Return turning angle in grad"""
     vector = [target[0]-current[0], target[1]-current[1]]
@@ -35,29 +21,7 @@ def calculate_angle_my(target: list, current: list, view: list):
         angle = 0
     vector2 = [vector[0]/lengths-view[0]/lenv, vector[1]/lengths-view[1]/lenv]
 
-    if(view[0] > 0):
-        a = "1"
-    else:
-        a = "0"
-
-    if(view[1] > 0):
-        b = "1"
-    else:
-        b = "0"
-
-    if(vector2[0] > 0):
-        c = "1"
-    else:
-        c = "0"
-
-    if(vector2[1] > 0):
-        d = "1"
-    else:
-        d = "0"
-
-    #print(a + b + c + d)
-
-    if(view[0] > 0 and view[1] > 0): 
+    if(view[0] > 0 and view[1] > 0):
         if(vector2[1] < 0):
             pass
         if(vector2[0] < 0):
@@ -74,17 +38,13 @@ def calculate_angle_my(target: list, current: list, view: list):
             pass
         if(vector2[0] > 0):
             angle = -1*angle
-    
+
     if(view[0] < 0 and view[1] > 0):
         if(vector2[0] > 0):
             pass
         if(vector2[1] < 0):
             angle = -1*angle
-    if(abs(angle*180/pi) > 0):
-        return angle*180/pi#angle/abs(angle)
-    else:
-        return 0
-
+    return angle*180/pi
 
 
 if __name__ == "__main__":
