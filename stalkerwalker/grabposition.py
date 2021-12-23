@@ -7,6 +7,7 @@
 
 Запускаю бота и смотрю что произойдет
 """
+
 from pymem import Pymem
 import time
 import keyboard
@@ -26,13 +27,13 @@ if "__main__" == __name__:
     holder = []
     plashka = False
     print("started")
-    while not plashka:
+    for i in range(0, 25):
         z = pm.read_float(pm.base_address+0x104944)
         x = pm.read_float(pm.base_address+0x10493C)
         j = keyboard.is_pressed('space')
         r = mouse.is_pressed('right')
         plashka = pm.read_bool(module_offset+0x54C2F9)
         holder.append([x, z, j, r])
-        time.sleep(0.16)
+        time.sleep(0.75)
     with open("dataclean", mode="w") as file:
         json.dump(holder, file)

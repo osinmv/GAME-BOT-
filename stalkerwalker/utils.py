@@ -5,14 +5,14 @@ import keys
 import keyboard
 import mouse
 from pymem import Pymem
-from math import acos, pi, sin, sqrt, isclose
-KOEF = 1
+from math import acos, pi, sin, sqrt, isclose, cos
+KOEF = 0.1
 
 # ТЫКАЕТ НАЧАТЬ НОВУЮ ИГРУ
 
 """
 def start_new_game():
-    #keys = keys.Keys()
+    # keys = keys.Keys()
     # ставим мышку в 0
     keys.directMouse(-5000, -5000)
     time.sleep(0.016)
@@ -67,34 +67,54 @@ def double_saveload():
 """
 
 
-def calculate_angle_my(target: list, current: list, view: list):
+def angle_from_cos_sin(vector: list):
+    """Return angle from cos and sin"""
+    angle = acos(vector[0])
+    if(vector[1] < 0):
+        angle = -angle
+    return angle/pi*180
+
+
+def normalize_vector(vector: list):
+    """Normalize vector"""
+    length = sqrt(vector[0]*vector[0]+vector[1]*vector[1])
+    return [vector[0]/length, vector[1]/length]
+
+
+def turn_vector(vector: list, angle: float):
+    """Return turned vector"""
+    angle = angle/180*pi
+    return [vector[0]*cos(angle)-vector[1]*sin(angle),
+            vector[0]*sin(angle)+vector[1]*cos(angle)]
+
+
+def calculate_rotation(target: list, current: list, view: list):
     """Return turning angle in grad"""
     # getting vectors
-    vector = [target[0]-current[0], target[1]-current[1]]
-    dot = vector[0]*view[0] + vector[1]*view[1]
-    lengths = sqrt(vector[0]*vector[0]+vector[1]*vector[1])
-    lenv = sqrt(view[0]*view[0]+view[1]*view[1])
-    angle = 0
-    # angle calculation
-    if(lengths != 0):
-        angle = acos(dot/(lengths*lenv))
+    vector = [current[0]-target[0], target[1]-current[1]]
+    direction = angle_from_cos_sin(normalize_vector(vector))
+    view_angle = angle_from_cos_sin(normalize_vector(view))
+    # calculating turning angle
+    # print("View: "+str(view_angle)+" Direction: "+str(direction))
+    angle = direction - view_angle
+    if abs(angle) > 100:
+        return get_sign_of_float(angle)*200
+    elif abs(angle) > 10:
+        return get_sign_of_float(angle)*150
+    elif abs(angle) > 7:
+        return get_sign_of_float(angle)*50
+    elif abs(angle) > 3:
+        return get_sign_of_float(angle)*10
     else:
-        angle = 0
-    vector2 = [vector[0]/lengths-view[0]/lenv, vector[1]/lengths-view[1]/lenv]
-    # angle correction based on sin and cos as view[0] and view[1]
-    if(view[0] > 0 and view[1] > 0):
-        if(vector2[0] < 0):
-            angle = -1*angle
-    elif(view[0] > 0 and view[1] < 0):
-        if(vector2[1] > 0):
-            angle = -1*angle
-    elif(view[0] < 0 and view[1] < 0):
-        if(vector2[0] > 0):
-            angle = angle
-    elif(view[0] < 0 and view[1] > 0):
-        if(vector2[1] < 0):
-            angle = -1*angle
-    return int(KOEF*angle*180/pi)
+        return 0
+
+
+def get_sign_of_float(number: float):
+    """Return sign of float"""
+    if(number > 0):
+        return 1
+    else:
+        return -1
 
 
 def data_from_game(pm: Pymem, module_offset: int):
@@ -144,7 +164,7 @@ def press_mouse_key(key: str):
     mouse.release(button=key)
 
 
-def turn_camera(pixels: int, keys):
+def turn_camera(pixels: int, keys: keys.Keys):
     """Turns camera"""
     keys.directMouse(pixels, 0)
 
@@ -156,18 +176,17 @@ def is_wpn_allowed(game_data: dict):
 
 
 def on_point(game_data: dict, points: list, index: int):
-    if(sqrt((points[index][0]-game_data["x"])*(points[index][0]-game_data["x"]) + (points[index][1]-game_data["z"])*(points[index][1]-game_data["z"])) < 0.25):
+    if(sqrt((points[index][0]-game_data["x"])*(points[index][0]-game_data["x"]) + (points[index][1]-game_data["z"])*(points[index][1]-game_data["z"])) < 0.75):
         return True
     return False
 
 
 def run_bot(game_data: dict, points: list, index: int, keys):
     """Moves camer and does actions like throw bolt or jump"""
-
-    angle1 = calculate_angle_my(
+    angle = calculate_rotation(
         points[index], [game_data["x"], game_data["z"]], [game_data["cos"], game_data["sin"]])
-    turn_camera(angle1, keys)
+    turn_camera(angle, keys)
     if(points[index][2]):
-        press_key("SPACE")
+        press_key("SPACE", keys=keys)
     if(points[index][3]):
         press_mouse_key("right")
