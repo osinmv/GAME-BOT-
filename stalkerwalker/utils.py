@@ -103,8 +103,8 @@ def calculate_rotation(target: list, current: list, view: list):
         return get_sign_of_float(angle)*150
     elif abs(angle) > 7:
         return get_sign_of_float(angle)*50
-    elif abs(angle) > 3:
-        return get_sign_of_float(angle)*10
+    elif abs(angle) > 1:
+        return get_sign_of_float(angle)*5
     else:
         return 0
 
@@ -124,7 +124,7 @@ def data_from_game(pm: Pymem, module_offset: int):
     z = pm.read_float(pm.base_address+0x104944)
     view_sin = pm.read_float(pm.base_address+0x104950)
     view_cos = pm.read_float(pm.base_address+0x104968)
-    return {"x": x, "z": z, "sin": view_sin, "cos": view_cos, "plashka": plahka}
+    return (x, z, view_cos, view_sin, plahka)
 
 
 def load_file(name: str):
@@ -169,24 +169,26 @@ def turn_camera(pixels: int, keys: keys.Keys):
     keys.directMouse(pixels, 0)
 
 
-def is_wpn_allowed(game_data: dict):
+def is_wpn_allowed(game_data: tuple):
     """Return True if player is outside of no weapon area
         Used only on Cordon"""
-    return game_data["x"] > -245.0 and game_data["z"] > -125.0
+    return game_data[0] > -245.0 and game_data[1] > -125.0
 
 
-def on_point(game_data: dict, points: list, index: int):
-    if(sqrt((points[index][0]-game_data["x"])*(points[index][0]-game_data["x"]) + (points[index][1]-game_data["z"])*(points[index][1]-game_data["z"])) < 0.75):
+def on_point(game_data: tuple, point: tuple):
+    if(sqrt((point[0]-game_data[0])*(point[0]-game_data[0])
+            + (point[1]-game_data[1])*(point[1]-game_data[1])) < 1):
         return True
     return False
 
 
-def run_bot(game_data: dict, points: list, index: int, keys):
+def run_bot(game_data: tuple, point: tuple, keys):
     """Moves camer and does actions like throw bolt or jump"""
     angle = calculate_rotation(
-        points[index], [game_data["x"], game_data["z"]], [game_data["cos"], game_data["sin"]])
+        point, (game_data[0], game_data[1]),
+        (game_data[2], game_data[3]))
     turn_camera(angle, keys)
-    if(points[index][2]):
+    if(point[2]):
         press_key("SPACE", keys=keys)
-    if(points[index][3]):
+    if(point[3]):
         press_mouse_key("right")

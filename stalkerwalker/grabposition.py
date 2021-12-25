@@ -34,6 +34,6 @@ if "__main__" == __name__:
         r = mouse.is_pressed('right')
         plashka = pm.read_bool(module_offset+0x54C2F9)
         holder.append([x, z, j, r])
-        time.sleep(0.75)
+        time.sleep(0.5)
     with open("dataclean", mode="w") as file:
         json.dump(holder, file)
