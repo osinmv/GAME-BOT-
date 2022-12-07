@@ -27,7 +27,8 @@ if "__main__" == __name__:
     holder = []
     plashka = False
     print("started")
-    for i in range(0, 25):
+    plashka = False
+    while not plashka:
         z = pm.read_float(pm.base_address+0x104944)
         x = pm.read_float(pm.base_address+0x10493C)
         j = keyboard.is_pressed('space')
