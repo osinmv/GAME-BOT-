@@ -1,4 +1,4 @@
-# stalkerBOT
+# GAME-BOT
 
 [![Package exe with PyInstaller - Windows](https://github.com/osinmv/stalkerBOT/actions/workflows/pyinstaller-windows.yml/badge.svg)](https://github.com/osinmv/stalkerBOT/actions/workflows/pyinstaller-windows.yml)
 
